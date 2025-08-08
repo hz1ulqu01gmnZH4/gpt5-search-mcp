@@ -6,6 +6,8 @@ An MCP (Model Context Protocol) server that provides access to OpenAI's GPT-5 mo
 
 - **GPT-5 Integration**: Direct access to OpenAI's latest GPT-5 reasoning model
 - **Web Search**: Built-in web search capabilities for up-to-date information
+- **Type Safety**: Full TypeScript types with Zod validation for API responses
+- **Error Handling**: Robust error handling with retry logic and structured error messages
 - **Multiple Variants**: Different tools for various use cases:
   - `gpt5-search`: Main tool with web search and medium reasoning
   - `gpt5`: Pure reasoning without web search
@@ -71,7 +73,19 @@ Uses the gpt-5-mini model - smaller, faster, and less expensive.
 ### gpt5-nano
 Uses the gpt-5-nano model - smallest and fastest for simple queries.
 
-## API Response Format
+## Implementation Details
+
+### Architecture Improvements (v0.0.2)
+- **Tool Factory Pattern**: Single `createTool` function eliminates code duplication
+- **Configuration Registry**: Centralized `toolConfigs` object manages all tool variants
+- **Type Safety**: Zod schemas validate API responses with proper TypeScript inference
+- **Error Handling**: 
+  - Custom `HttpError` class for structured errors
+  - Automatic retry with exponential backoff for transient failures
+  - Respects `Retry-After` headers for rate limiting
+  - User-friendly error messages for different status codes
+
+### API Response Format
 
 The GPT-5 API returns a structured response with:
 - Reasoning tokens (hidden but billed)

@@ -1,6 +1,6 @@
 {
   "name": "gpt5-search-mcp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "build/index.js",
   "bin": {
     "gpt5-search-mcp": "./build/index.js"
