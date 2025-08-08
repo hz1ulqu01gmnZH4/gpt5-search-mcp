@@ -1,0 +1,45 @@
+{
+  "name": "gpt5-search-mcp",
+  "version": "0.0.1",
+  "main": "build/index.js",
+  "bin": {
+    "gpt5-search-mcp": "./build/index.js"
+  },
+  "files": [
+    "build/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/gpt5-search-mcp.git"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "openai",
+    "gpt5",
+    "gpt-5",
+    "chatgpt",
+    "llm",
+    "web-search",
+    "reasoning"
+  ],
+  "author": "",
+  "license": "MIT",
+  "description": "MCP server for web search using OpenAI GPT-5 model with reasoning capabilities",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && chmod +x build/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.2",
+    "minimist": "^1.2.8",
+    "openai": "^5.8.1",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/minimist": "^1.2.5",
+    "@types/node": "^24.0.4",
+    "typescript": "^5.8.3"
+  }
+}
