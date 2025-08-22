@@ -102,4 +102,4 @@ node test-mcp.js
 
 ## License
 
-MIT
+WTFPL - Do What The Fuck You Want To Public License
