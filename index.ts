@@ -339,14 +339,16 @@ Object.entries(toolConfigs).forEach(([name, config]) => {
 // ============================================================================
 
 async function main() {
-  if (!process.env.OPENAI_API_KEY) {
-    console.error("Error: OPENAI_API_KEY environment variable is not set");
-    process.exit(1);
-  }
-
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.log("GPT-5 MCP Server running on stdio (v0.0.2 - refactored)");
+  
+  // Check API key after connection is established
+  if (!process.env.OPENAI_API_KEY) {
+    process.stderr.write("Warning: OPENAI_API_KEY environment variable is not set. Tools will fail without it.\n");
+  }
+  
+  // Use stderr for logging to avoid interfering with stdio protocol
+  process.stderr.write("GPT-5 MCP Server running on stdio (v0.0.2 - refactored)\n");
 }
 
 main().catch((error) => {
