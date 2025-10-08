@@ -15,6 +15,7 @@ An MCP (Model Context Protocol) server that provides access to OpenAI's GPT-5 mo
   - `gpt5-high`: Deep analysis with high reasoning effort
   - `gpt5-mini`: Using the smaller gpt-5-mini model
   - `gpt5-nano`: Using the smallest gpt-5-nano model
+  - `gpt5-pro`: ⚠️ **EXPENSIVE** - Premium GPT-5 Pro model (use only when explicitly requested)
 
 ## Installation
 
@@ -72,6 +73,13 @@ Uses the gpt-5-mini model - smaller, faster, and less expensive.
 
 ### gpt5-nano
 Uses the gpt-5-nano model - smallest and fastest for simple queries.
+
+### gpt5-pro ⚠️
+**EXPENSIVE MODEL - Use Only When Explicitly Requested**
+
+Uses the `gpt-5-pro-2025-10-06` model with maximum reasoning capabilities and web search. This is a premium, high-cost model that provides the most advanced reasoning and analysis capabilities.
+
+**Important**: This model should only be invoked when the user explicitly requests it due to its significantly higher cost compared to standard GPT-5 models.
 
 ## Implementation Details
 

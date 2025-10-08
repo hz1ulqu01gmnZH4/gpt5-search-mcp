@@ -109,7 +109,7 @@ async function withRetry<T>(
 // ============================================================================
 
 interface ToolConfig {
-  model: 'gpt-5' | 'gpt-5-mini' | 'gpt-5-nano';
+  model: 'gpt-5' | 'gpt-5-mini' | 'gpt-5-nano' | 'gpt-5-pro-2025-10-06';
   reasoning: {
     effort: 'low' | 'medium' | 'high';
   };
@@ -118,6 +118,7 @@ interface ToolConfig {
     contextSize?: 'low' | 'medium' | 'high';
   };
   description: string;
+  requiresExplicitConfirmation?: boolean;
 }
 
 // Tool configurations registry
@@ -171,6 +172,16 @@ const toolConfigs: Record<string, ToolConfig> = {
       contextSize: 'low',
     },
     description: 'GPT-5-nano model with web search capabilities. Smallest and fastest model for simple queries.',
+  },
+  'gpt5-pro': {
+    model: 'gpt-5-pro-2025-10-06',
+    reasoning: { effort: 'high' },
+    webSearch: {
+      enabled: true,
+      contextSize: 'high',
+    },
+    description: '⚠️ EXPENSIVE MODEL - GPT-5 Pro (2025-10-06) with maximum reasoning capabilities and web search. This is a premium, high-cost model. Only use when explicitly requested by the user. Provides the most advanced reasoning and analysis capabilities.',
+    requiresExplicitConfirmation: true,
   },
 };
 
