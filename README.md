@@ -35,6 +35,7 @@ export OPENAI_API_KEY=your-api-key-here
 Optional environment variables:
 - `SEARCH_CONTEXT_SIZE`: Controls web search context size (`low`, `medium`, `high`). Default: `medium`
 - `REASONING_EFFORT`: Controls reasoning effort (`low`, `medium`, `high`). Default: `medium`
+- `CLIENT_CWD`: Directory where gpt5-pro outputs will be saved. Default: server's current working directory
 
 ## Usage with Claude Code
 
@@ -47,12 +48,15 @@ Add to your Claude Code configuration (`.claude/config.json`):
       "command": "node",
       "args": ["/path/to/gpt5-search-mcp/build/index.js"],
       "env": {
-        "OPENAI_API_KEY": "your-api-key-here"
+        "OPENAI_API_KEY": "your-api-key-here",
+        "CLIENT_CWD": "${workspaceFolder}"
       }
     }
   }
 }
 ```
+
+**Note**: The `CLIENT_CWD` variable controls where gpt5-pro output files are saved. Use `${workspaceFolder}` to save files in your current working directory, or specify an absolute path.
 
 ## Available Tools
 
@@ -79,7 +83,12 @@ Uses the gpt-5-nano model - smallest and fastest for simple queries.
 
 Uses the `gpt-5-pro-2025-10-06` model with maximum reasoning capabilities and web search. This is a premium, high-cost model that provides the most advanced reasoning and analysis capabilities.
 
-**Important**: This model should only be invoked when the user explicitly requests it due to its significantly higher cost compared to standard GPT-5 models.
+**Important Notes**:
+- This model should only be invoked when the user explicitly requests it due to its significantly higher cost
+- **Automatic File Output**: Due to extremely large output sizes that can crash clients, gpt5-pro responses are automatically saved to files in the `gpt5-pro-outputs/` directory
+- The tool returns only a preview (first 1000 chars) and the file path
+- Files are named with timestamps: `gpt5-pro-YYYY-MM-DDTHH-MM-SS-mmmZ.txt`
+- Output location can be controlled with the `CLIENT_CWD` environment variable
 
 ## Implementation Details
 

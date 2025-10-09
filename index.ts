@@ -3,6 +3,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import OpenAI from "openai";
 import { z } from "zod";
+import * as fs from "fs";
+import * as path from "path";
 
 // ============================================================================
 // Type Definitions
@@ -289,6 +291,46 @@ function createTool(name: string, config: ToolConfig) {
 
         // Extract text from validated response
         const responseText = extractResponseText(validationResult.data.output);
+
+        // For gpt5-pro, always write to file to prevent client crashes from large outputs
+        if (name === 'gpt5-pro') {
+          try {
+            // Use client's working directory if available, otherwise fall back to server's cwd
+            const baseDir = process.env.CLIENT_CWD || process.cwd();
+            const outputDir = path.join(baseDir, 'gpt5-pro-outputs');
+            if (!fs.existsSync(outputDir)) {
+              fs.mkdirSync(outputDir, { recursive: true });
+            }
+
+            // Generate filename with timestamp
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const filename = `gpt5-pro-${timestamp}.txt`;
+            const filepath = path.join(outputDir, filename);
+
+            // Write response to file
+            fs.writeFileSync(filepath, responseText, 'utf-8');
+
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: `GPT-5 Pro response written to file due to large output size.\n\nFile: ${filepath}\n\nResponse preview (first 1000 chars):\n${responseText.substring(0, 1000)}${responseText.length > 1000 ? '...\n\n[Output truncated. See full response in file above]' : ''}`,
+                },
+              ],
+            };
+          } catch (fileError) {
+            console.error("Error writing gpt5-pro output to file:", fileError);
+            // Fall back to returning truncated output
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: `GPT-5 Pro response (truncated to 2000 chars due to file write error):\n\n${responseText.substring(0, 2000)}${responseText.length > 2000 ? '...\n\n[Output truncated]' : ''}`,
+                },
+              ],
+            };
+          }
+        }
 
         return {
           content: [
