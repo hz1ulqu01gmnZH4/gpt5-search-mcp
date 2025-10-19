@@ -132,12 +132,12 @@ const toolConfigs: Record<string, ToolConfig> = {
       enabled: true,
       contextSize: process.env.SEARCH_CONTEXT_SIZE as 'low' | 'medium' | 'high' || 'medium',
     },
-    description: 'An AI agent with advanced web search capabilities using GPT-5. Useful for finding the latest information, troubleshooting errors, and discussing ideas or design challenges.',
+    description: 'An AI agent with advanced web search capabilities using GPT-5. Useful for finding the latest information, troubleshooting errors, and discussing ideas or design challenges. NOTE: Cannot read local files - only accepts text prompts.',
   },
   'gpt5': {
     model: 'gpt-5',
     reasoning: { effort: process.env.REASONING_EFFORT as 'low' | 'medium' | 'high' || 'medium' },
-    description: 'GPT-5 with advanced reasoning capabilities but without web search. Best for complex problem-solving, coding, and analysis that doesn\'t require current information.',
+    description: 'GPT-5 with advanced reasoning capabilities but without web search. Best for complex problem-solving, coding, and analysis that doesn\'t require current information. NOTE: Cannot read local files - only accepts text prompts.',
   },
   'gpt5-low': {
     model: 'gpt-5',
@@ -146,7 +146,7 @@ const toolConfigs: Record<string, ToolConfig> = {
       enabled: true,
       contextSize: 'low',
     },
-    description: 'GPT-5 with low reasoning effort and web search capabilities. Faster responses for simpler queries.',
+    description: 'GPT-5 with low reasoning effort and web search capabilities. Faster responses for simpler queries. NOTE: Cannot read local files - only accepts text prompts.',
   },
   'gpt5-high': {
     model: 'gpt-5',
@@ -155,7 +155,7 @@ const toolConfigs: Record<string, ToolConfig> = {
       enabled: true,
       contextSize: 'high',
     },
-    description: 'GPT-5 with high reasoning effort and web search capabilities. Best for complex problems requiring deep analysis and current information.',
+    description: 'GPT-5 with high reasoning effort and web search capabilities. Best for complex problems requiring deep analysis and current information. NOTE: Cannot read local files - only accepts text prompts.',
   },
   'gpt5-mini': {
     model: 'gpt-5-mini',
@@ -164,7 +164,7 @@ const toolConfigs: Record<string, ToolConfig> = {
       enabled: true,
       contextSize: process.env.SEARCH_CONTEXT_SIZE as 'low' | 'medium' | 'high' || 'medium',
     },
-    description: 'GPT-5-mini model with web search capabilities. Smaller, faster, and less expensive but may provide less comprehensive responses.',
+    description: 'GPT-5-mini model with web search capabilities. Smaller, faster, and less expensive but may provide less comprehensive responses. NOTE: Cannot read local files - only accepts text prompts.',
   },
   'gpt5-nano': {
     model: 'gpt-5-nano',
@@ -173,7 +173,7 @@ const toolConfigs: Record<string, ToolConfig> = {
       enabled: true,
       contextSize: 'low',
     },
-    description: 'GPT-5-nano model with web search capabilities. Smallest and fastest model for simple queries.',
+    description: 'GPT-5-nano model with web search capabilities. Smallest and fastest model for simple queries. NOTE: Cannot read local files - only accepts text prompts.',
   },
   'gpt5-pro': {
     model: 'gpt-5-pro-2025-10-06',
@@ -182,7 +182,7 @@ const toolConfigs: Record<string, ToolConfig> = {
       enabled: true,
       contextSize: 'high',
     },
-    description: '⚠️ EXPENSIVE MODEL - GPT-5 Pro (2025-10-06) with maximum reasoning capabilities and web search. This is a premium, high-cost model. Only use when explicitly requested by the user. Provides the most advanced reasoning and analysis capabilities.',
+    description: '⚠️ EXPENSIVE MODEL - GPT-5 Pro (2025-10-06) with maximum reasoning capabilities and web search. This is a premium, high-cost model. Only use when explicitly requested by the user. Provides the most advanced reasoning and analysis capabilities. NOTE: Cannot read local files - only accepts text prompts.',
     requiresExplicitConfirmation: true,
   },
 };
