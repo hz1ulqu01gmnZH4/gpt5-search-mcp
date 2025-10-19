@@ -17,6 +17,15 @@ An MCP (Model Context Protocol) server that provides access to OpenAI's GPT-5 mo
   - `gpt5-nano`: Using the smallest gpt-5-nano model
   - `gpt5-pro`: ⚠️ **EXPENSIVE** - Premium GPT-5 Pro model (use only when explicitly requested)
 
+## Limitations
+
+⚠️ **No Local File Access**: This MCP server does not provide file reading capabilities. The GPT-5 tools cannot access or read local files from your system. Only text prompts are sent to the OpenAI API.
+
+- **What it CAN do**: Write gpt5-pro outputs to files, make web searches, perform reasoning
+- **What it CANNOT do**: Read local files, access your filesystem, include file contents in prompts
+
+If you need to provide file contents to GPT-5, you must copy/paste the content into your prompt manually.
+
 ## Installation
 
 ```bash
