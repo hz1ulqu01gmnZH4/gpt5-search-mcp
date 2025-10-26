@@ -3,6 +3,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import OpenAI from "openai";
 import { z } from "zod";
+import * as fs from "fs";
+import * as path from "path";
 
 // ============================================================================
 // Type Definitions
@@ -109,7 +111,7 @@ async function withRetry<T>(
 // ============================================================================
 
 interface ToolConfig {
-  model: 'gpt-5';
+  model: 'gpt-5' | 'gpt-5-mini' | 'gpt-5-nano' | 'gpt-5-pro-2025-10-06';
   reasoning: {
     effort: 'low' | 'medium' | 'high';
   };
@@ -118,9 +120,10 @@ interface ToolConfig {
     contextSize?: 'low' | 'medium' | 'high';
   };
   description: string;
+  requiresExplicitConfirmation?: boolean;
 }
 
-// Tool configurations registry - Lean version with only essential tools
+// Tool configurations registry
 const toolConfigs: Record<string, ToolConfig> = {
   'gpt5-search': {
     model: 'gpt-5',
@@ -131,6 +134,20 @@ const toolConfigs: Record<string, ToolConfig> = {
     },
     description: 'An AI agent with advanced web search capabilities using GPT-5. Useful for finding the latest information, troubleshooting errors, and discussing ideas or design challenges. NOTE: Cannot read local files - only accepts text prompts.',
   },
+  'gpt5': {
+    model: 'gpt-5',
+    reasoning: { effort: process.env.REASONING_EFFORT as 'low' | 'medium' | 'high' || 'medium' },
+    description: 'GPT-5 with advanced reasoning capabilities but without web search. Best for complex problem-solving, coding, and analysis that doesn\'t require current information. NOTE: Cannot read local files - only accepts text prompts.',
+  },
+  'gpt5-low': {
+    model: 'gpt-5',
+    reasoning: { effort: 'low' },
+    webSearch: {
+      enabled: true,
+      contextSize: 'low',
+    },
+    description: 'GPT-5 with low reasoning effort and web search capabilities. Faster responses for simpler queries. NOTE: Cannot read local files - only accepts text prompts.',
+  },
   'gpt5-high': {
     model: 'gpt-5',
     reasoning: { effort: 'high' },
@@ -139,6 +156,34 @@ const toolConfigs: Record<string, ToolConfig> = {
       contextSize: 'high',
     },
     description: 'GPT-5 with high reasoning effort and web search capabilities. Best for complex problems requiring deep analysis and current information. NOTE: Cannot read local files - only accepts text prompts.',
+  },
+  'gpt5-mini': {
+    model: 'gpt-5-mini',
+    reasoning: { effort: process.env.REASONING_EFFORT as 'low' | 'medium' | 'high' || 'medium' },
+    webSearch: {
+      enabled: true,
+      contextSize: process.env.SEARCH_CONTEXT_SIZE as 'low' | 'medium' | 'high' || 'medium',
+    },
+    description: 'GPT-5-mini model with web search capabilities. Smaller, faster, and less expensive but may provide less comprehensive responses. NOTE: Cannot read local files - only accepts text prompts.',
+  },
+  'gpt5-nano': {
+    model: 'gpt-5-nano',
+    reasoning: { effort: 'low' },
+    webSearch: {
+      enabled: true,
+      contextSize: 'low',
+    },
+    description: 'GPT-5-nano model with web search capabilities. Smallest and fastest model for simple queries. NOTE: Cannot read local files - only accepts text prompts.',
+  },
+  'gpt5-pro': {
+    model: 'gpt-5-pro-2025-10-06',
+    reasoning: { effort: 'high' },
+    webSearch: {
+      enabled: true,
+      contextSize: 'high',
+    },
+    description: '⚠️ EXPENSIVE MODEL - GPT-5 Pro (2025-10-06) with maximum reasoning capabilities and web search. This is a premium, high-cost model. Only use when explicitly requested by the user. Provides the most advanced reasoning and analysis capabilities. NOTE: Cannot read local files - only accepts text prompts.',
+    requiresExplicitConfirmation: true,
   },
 };
 
@@ -246,6 +291,46 @@ function createTool(name: string, config: ToolConfig) {
 
         // Extract text from validated response
         const responseText = extractResponseText(validationResult.data.output);
+
+        // For gpt5-pro, always write to file to prevent client crashes from large outputs
+        if (name === 'gpt5-pro') {
+          try {
+            // Use client's working directory if available, otherwise fall back to server's cwd
+            const baseDir = process.env.CLIENT_CWD || process.cwd();
+            const outputDir = path.join(baseDir, 'gpt5-pro-outputs');
+            if (!fs.existsSync(outputDir)) {
+              fs.mkdirSync(outputDir, { recursive: true });
+            }
+
+            // Generate filename with timestamp
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const filename = `gpt5-pro-${timestamp}.txt`;
+            const filepath = path.join(outputDir, filename);
+
+            // Write response to file
+            fs.writeFileSync(filepath, responseText, 'utf-8');
+
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: `GPT-5 Pro response written to file due to large output size.\n\nFile: ${filepath}\n\nResponse preview (first 1000 chars):\n${responseText.substring(0, 1000)}${responseText.length > 1000 ? '...\n\n[Output truncated. See full response in file above]' : ''}`,
+                },
+              ],
+            };
+          } catch (fileError) {
+            console.error("Error writing gpt5-pro output to file:", fileError);
+            // Fall back to returning truncated output
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: `GPT-5 Pro response (truncated to 2000 chars due to file write error):\n\n${responseText.substring(0, 2000)}${responseText.length > 2000 ? '...\n\n[Output truncated]' : ''}`,
+                },
+              ],
+            };
+          }
+        }
 
         return {
           content: [
