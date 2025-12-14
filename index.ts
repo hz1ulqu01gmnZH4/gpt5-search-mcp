@@ -114,7 +114,7 @@ async function withRetry<T>(
 // ============================================================================
 
 interface ToolConfig {
-  model: 'gpt-5';
+  model: 'gpt-5' | 'gpt-5.2';
   reasoning: {
     effort: 'low' | 'medium' | 'high';
   };
@@ -145,6 +145,24 @@ const toolConfigs: Record<string, ToolConfig> = {
     },
     description: 'GPT-5 with high reasoning effort and web search capabilities. Best for complex problems requiring deep analysis and current information. NOTE: Cannot read local files - only accepts text prompts.',
   },
+  'gpt5.2-search': {
+    model: 'gpt-5.2',
+    reasoning: { effort: process.env.REASONING_EFFORT as 'low' | 'medium' | 'high' || 'medium' },
+    webSearch: {
+      enabled: true,
+      contextSize: process.env.SEARCH_CONTEXT_SIZE as 'low' | 'medium' | 'high' || 'medium',
+    },
+    description: 'GPT-5.2 with web search - the best model for coding and agentic tasks. 400K context, Aug 2025 knowledge. NOTE: Cannot read local files - only accepts text prompts.',
+  },
+  'gpt5.2-high': {
+    model: 'gpt-5.2',
+    reasoning: { effort: 'high' },
+    webSearch: {
+      enabled: true,
+      contextSize: 'high',
+    },
+    description: 'GPT-5.2 with high reasoning effort and web search. Best for complex coding, architecture, and agentic tasks requiring deep analysis. NOTE: Cannot read local files - only accepts text prompts.',
+  },
 };
 
 // ============================================================================
@@ -159,7 +177,7 @@ const openai = new OpenAI({
 // Create server instance
 const server = new McpServer({
   name: "gpt5-search-mcp",
-  version: "0.0.2",
+  version: "0.0.3",
 });
 
 // Helper function to extract text from GPT-5 response
@@ -332,7 +350,7 @@ async function main() {
   }
   
   // Use stderr for logging to avoid interfering with stdio protocol
-  process.stderr.write("GPT-5 MCP Server running on stdio (v0.0.2 - refactored)\n");
+  process.stderr.write("GPT-5/5.2 MCP Server running on stdio (v0.0.3)\n");
 }
 
 main().catch((error) => {

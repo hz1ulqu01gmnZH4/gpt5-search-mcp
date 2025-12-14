@@ -1,6 +1,6 @@
 {
   "name": "gpt5-search-mcp",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "build/index.js",
   "bin": {
     "gpt5-search-mcp": "./build/index.js"
@@ -18,6 +18,7 @@
     "openai",
     "gpt5",
     "gpt-5",
+    "gpt-5.2",
     "chatgpt",
     "llm",
     "web-search",
@@ -25,7 +26,7 @@
   ],
   "author": "",
   "license": "MIT",
-  "description": "MCP server for web search using OpenAI GPT-5 model with reasoning capabilities",
+  "description": "MCP server for web search using OpenAI GPT-5 and GPT-5.2 models with reasoning capabilities",
   "type": "module",
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
