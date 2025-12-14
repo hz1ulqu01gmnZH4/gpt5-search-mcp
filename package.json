@@ -30,6 +30,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
+    "build:skill": "tsc --project skill/tsconfig.json && chmod +x skill/scripts/gpt5-search.js && sed -i '1s|.*|#!/usr/bin/env node|' skill/scripts/gpt5-search.js",
+    "build:all": "npm run build && npm run build:skill",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

@@ -1,0 +1,20 @@
+{
+  "name": "gpt5-search-skill",
+  "version": "0.0.3",
+  "type": "module",
+  "description": "GPT-5/5.2 search CLI tool for Claude Code skills",
+  "main": "scripts/gpt5-search.js",
+  "bin": {
+    "gpt5-search": "./scripts/gpt5-search.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x scripts/gpt5-search.js && sed -i '1s|.*|#!/usr/bin/env node|' scripts/gpt5-search.js"
+  },
+  "dependencies": {
+    "openai": "^5.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.4",
+    "typescript": "^5.8.3"
+  }
+}
